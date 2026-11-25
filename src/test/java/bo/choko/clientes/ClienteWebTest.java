@@ -23,7 +23,7 @@ class ClienteWebTest {
     @Test
     void exigeSesionParaConsultarClientes() throws Exception {
         mvc.perform(get("/clientes").accept("text/html")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/login"));
+                .andExpect(redirectedUrl("/login"));
     }
 
     @Test
