@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clientes · Maestranza CHOKO</title>
+  <link rel="stylesheet" th:href="@{/choko.css}">
+</head>
+<body>
+  <header><span>Maestranza <strong>CHOKO</strong></span><form method="post" th:action="@{/logout}"><button class="secundario">Cerrar sesión</button></form></header>
+  <main>
+    <div class="fila"><h1>Clientes</h1><a class="accion" th:href="@{/clientes/nuevo}">Registrar cliente</a></div>
+    <p role="status" th:if="${aviso}" th:text="${aviso}"></p>
+    <form method="get" th:action="@{/clientes}">
+      <label for="q">Buscar por nombre</label>
+      <div class="fila busqueda"><input type="search" name="q" id="q" th:value="${q}"><button>Buscar</button></div>
+    </form>
+    <p th:if="${clientes.empty}">No se encontraron clientes.</p>
+    <table th:unless="${clientes.empty}">
+      <thead><tr><th>Nombre</th><th>Teléfono</th></tr></thead>
+      <tbody><tr th:each="cliente : ${clientes}"><td th:text="${cliente.nombre}"></td><td th:text="${cliente.telefono ?: '—'}"></td></tr></tbody>
+    </table>
+    <nav aria-label="Paginación">
+      <a th:if="${clientes.hasPrevious()}" th:href="@{/clientes(q=${q},pagina=${clientes.number - 1})}">Anterior</a>
+      <a th:if="${clientes.hasNext()}" th:href="@{/clientes(q=${q},pagina=${clientes.number + 1})}">Siguiente</a>
+    </nav>
+  </main>
+</body>
+</html>

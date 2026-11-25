@@ -1,9 +1,14 @@
 # Maestranza CHOKO
 
-Primer paso del incremento I1 de la monograf�a. El m�dulo de clientes permite registrar y buscar por nombre desde la capa de persistencia. La interfaz web y la autenticaci�n quedan para el siguiente paso.
+Sistema interno de gestión y seguimiento de órdenes de trabajo. El incremento I1 permite al personal iniciar sesión, registrar clientes y buscarlos por nombre desde el navegador. El nombre es obligatorio y el teléfono es opcional.
 
-## Ejecutar las pruebas
+## Ejecutar en laboratorio
 
-Se requiere Java 21, Maven 3.9 y una base PostgreSQL de pruebas vac�a. Aplicar db/001_clientes.sql a esa base y configurar CHOKO_DB_URL (URL JDBC), CHOKO_DB_USER y CHOKO_DB_PASSWORD. Ejecutar `mvn verify`. La prueba de integraci�n revierte sus datos al finalizar. El workflow de GitHub Actions prepara una base temporal con PostgreSQL 17.
+1. Instalar Java 21, Maven 3.9 y PostgreSQL 17. Crear una base de laboratorio y aplicar `db/001_clientes.sql` una sola vez con el usuario que utilizará la aplicación.
+2. Configurar `CHOKO_DB_URL` (por ejemplo, `jdbc:postgresql://localhost:5432/choko`), `CHOKO_DB_USER` y `CHOKO_DB_PASSWORD`.
+3. Definir `CHOKO_WEB_USER` y `CHOKO_WEB_PASSWORD` con las credenciales del operador de laboratorio. La cuenta inicial se configura mediante el entorno.
+4. Ejecutar `mvn spring-boot:run`, abrir http://localhost:8080/clientes e iniciar sesión.
 
-Como decisi�n inicial, el modelo exige un nombre y admite un tel�fono opcional. Los l�mites son 150 y 40 caracteres respectivamente, sujetos a validaci�n con el taller.
+## Pruebas
+
+Para ejecutar `mvn verify`, apuntar las variables de conexión a una base de pruebas con el esquema aplicado. GitHub Actions prepara PostgreSQL, ejecuta las pruebas de dominio, persistencia y acceso web, y empaqueta el JAR.

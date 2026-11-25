@@ -16,6 +16,8 @@ jobs:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 5s --health-timeout 3s --health-retries 10
     env:
+      CHOKO_WEB_USER: operador-pruebas
+      CHOKO_WEB_PASSWORD: clave-solo-para-ci
       CHOKO_DB_URL: jdbc:postgresql://localhost:5432/choko_test
       CHOKO_DB_USER: choko_test
       CHOKO_DB_PASSWORD: solo-pruebas

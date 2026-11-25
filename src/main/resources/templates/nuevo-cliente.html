@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registrar cliente · Maestranza CHOKO</title>
+  <link rel="stylesheet" th:href="@{/choko.css}">
+</head>
+<body>
+  <header><span>Maestranza <strong>CHOKO</strong></span><form method="post" th:action="@{/logout}"><button class="secundario">Cerrar sesión</button></form></header>
+  <main>
+    <a th:href="@{/clientes}">Volver a clientes</a>
+    <h1>Registrar cliente</h1>
+    <form class="registro" method="post" th:action="@{/clientes}">
+      <p role="alert" th:if="${error}" th:text="${error}"></p>
+      <label for="nombre">Nombre</label>
+      <input id="nombre" name="nombre" maxlength="150" autocomplete="name" required th:value="${nombre}">
+      <label for="telefono">Teléfono (opcional)</label>
+      <input type="tel" id="telefono" name="telefono" maxlength="40" autocomplete="tel" th:value="${telefono}">
+      <button>Guardar cliente</button>
+    </form>
+  </main>
+</body>
+</html>

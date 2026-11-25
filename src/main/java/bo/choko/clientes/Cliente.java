@@ -24,7 +24,7 @@ public class Cliente {
         this.nombre = nombre.strip();
         this.telefono = telefono == null || telefono.isBlank() ? null : telefono.strip();
         if (this.telefono != null && this.telefono.length() > 40) {
-            throw new IllegalArgumentException("El tel�fono admite hasta 40 caracteres.");
+            throw new IllegalArgumentException("El teléfono admite hasta 40 caracteres.");
         }
     }
 
