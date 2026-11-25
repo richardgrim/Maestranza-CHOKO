@@ -2,6 +2,8 @@ name: Demostración web de clientes
 on:
   push:
     branches: [demo/i1-clientes]
+  pull_request:
+    branches: [feat/i1-acceso-web, main]
   workflow_dispatch:
 permissions:
   contents: read
