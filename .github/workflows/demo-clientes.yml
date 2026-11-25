@@ -46,6 +46,10 @@ jobs:
           trap 'kill "$app_pid" 2>/dev/null || true' EXIT
           curl -fsS --retry 45 --retry-delay 1 --retry-all-errors http://127.0.0.1:8080/login -o /dev/null
           "$RUNNER_TEMP/navegador/bin/python" pruebas/demo_clientes.py
+      - name: Identificar la versión demostrada
+        run: |
+          printf 'Repositorio: %s\nCommit: %s\nEjecución: %s/%s/actions/runs/%s\n' \
+            "$GITHUB_REPOSITORY" "$GITHUB_SHA" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" > evidencias/version.txt
       - name: Guardar evidencias
         uses: actions/upload-artifact@v4
         with:
