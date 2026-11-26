@@ -27,3 +27,9 @@ En Ubuntu con Docker y Compose, definir las variables `CHOKO_DB_PASSWORD`, `CHOK
 PostgreSQL inicializa los scripts de `db/` por orden de nombre en el primer arranque con un volumen vacío. Para un volumen existente, aplicar las migraciones pendientes según el incremento instalado. `docker compose down` detiene el laboratorio y conserva el volumen de datos. Al ejecutar `docker compose up -d` se recuperan los registros.
 
 El workflow de laboratorio despliega los dos servicios en Ubuntu, ejecuta la demostración de I1–I3 en Chrome y comprueba que el historial ficticio se conserva después de recrear los contenedores.
+
+## Evaluación DevSecOps
+
+El workflow de pruebas publica el informe HTML y XML de cobertura JaCoCo después de `mvn verify`. El de seguridad revisa el historial de la versión con Gitleaks, analiza los archivos Java de producción con las reglas p/java de Semgrep, comprueba dependencias Maven con OWASP Dependency-Check y analiza la imagen del Dockerfile con Trivy.
+
+Un secreto detectado, un hallazgo Semgrep de nivel ERROR o un fallo en la ejecución de un analizador hace fallar su trabajo. Los informes de dependencias e imagen requieren revisión antes de la integración. Clasificar las coincidencias por componente, versión instalada y corregida, gravedad y exposición en el laboratorio. Un trabajo completado indica que produjo el informe; la conclusión sobre vulnerabilidades se obtiene del contenido.

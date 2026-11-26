@@ -31,3 +31,20 @@ jobs:
       - name: Crear esquema de prueba
         run: PGPASSWORD="$CHOKO_DB_PASSWORD" psql -h localhost -U choko_test -d choko_test -v ON_ERROR_STOP=1 -1 -f db/001_clientes.sql -f db/002_ordenes.sql -f db/003_seguimiento.sql
       - run: mvn --batch-mode verify
+      - name: Resumir cobertura de líneas
+        run: |
+          python3 - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+          counter = ET.parse('target/site/jacoco/jacoco.xml').find("counter[@type='LINE']")
+          hit, missed = int(counter.get('covered')), int(counter.get('missed'))
+          msg = f"JaCoCo: {hit}/{hit + missed} líneas cubiertas ({100*hit/(hit+missed):.1f} %)"
+          print(msg)
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
+              print(msg, file=out)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: I4-cobertura
+          path: target/site/jacoco/
+          if-no-files-found: error
