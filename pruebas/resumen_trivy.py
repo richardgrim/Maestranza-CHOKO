@@ -31,6 +31,7 @@ resumen = {
     "con_version_corregida": sum(bool(f[6]) for f in filas),
     "principales_paquetes": paquetes.most_common(12),
     "actualizaciones_identificadas": corregibles,
+    "detalle_corregible": [f for f in filas if f[6]],
 }
 texto = json.dumps(resumen, ensure_ascii=False, indent=2)
 (salida / "resumen.json").write_text(texto + "\n")

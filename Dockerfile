@@ -5,6 +5,9 @@ COPY src ./src
 RUN mvn --batch-mode -DskipTests package
 
 FROM eclipse-temurin:21-jre
+RUN apt-get update \
+    && apt-get install -y --only-upgrade --no-install-recommends perl-base \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=build /build/target/maestranza-choko-*.jar /app/choko.jar
 USER 10001:10001
