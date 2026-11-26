@@ -1,0 +1,51 @@
+name: Laboratorio Docker Compose
+on:
+  pull_request:
+    branches: [main, feat/i3-seguimiento]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  laboratorio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CHOKO_WEB_USER: operador-laboratorio
+    steps:
+      - uses: actions/checkout@v4
+      - name: Crear credenciales temporales de laboratorio
+        run: |
+          for variable in CHOKO_DB_PASSWORD CHOKO_WEB_PASSWORD; do
+            valor=$(openssl rand -hex 24)
+            echo "::add-mask::$valor"
+            echo "$variable=$valor" >> "$GITHUB_ENV"
+          done
+      - name: Construir y desplegar
+        run: |
+          docker compose up -d --build
+          curl -fsS --retry 60 --retry-delay 2 --retry-all-errors http://localhost:8080/login -o /dev/null
+      - name: Verificar clientes, órdenes y seguimiento en Chrome
+        run: |
+          python3 -m venv "$RUNNER_TEMP/navegador"
+          "$RUNNER_TEMP/navegador/bin/pip" install playwright==1.56.0
+          "$RUNNER_TEMP/navegador/bin/python" pruebas/demo_clientes.py
+      - name: Recrear los servicios y verificar los datos del laboratorio
+        run: |
+          mkdir -p evidencia-compose
+          consulta="SELECT o.id,o.estado,s.id,s.tipo,s.detalle,s.cantidad,s.usuario FROM ordenes o JOIN seguimiento s ON s.orden_id=o.id ORDER BY o.id,s.id"
+          docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U choko -d choko --csv -c "$consulta" > evidencia-compose/antes.csv
+          test "$(wc -l < evidencia-compose/antes.csv)" -eq 5
+          docker compose down
+          docker compose up -d
+          curl -fsS --retry 60 --retry-delay 2 --retry-all-errors http://localhost:8080/login -o /dev/null
+          docker compose exec -T db psql -X -v ON_ERROR_STOP=1 -U choko -d choko --csv -c "$consulta" > evidencia-compose/despues.csv
+          diff -u evidencia-compose/antes.csv evidencia-compose/despues.csv
+          docker compose ps > evidencia-compose/servicios.txt
+          git rev-parse HEAD > evidencia-compose/commit.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: I4-laboratorio-compose
+          path: evidencia-compose/
+      - name: Detener el laboratorio temporal
+        if: always()
+        run: docker compose down
