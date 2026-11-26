@@ -19,3 +19,11 @@ El flujo inicial propuesto es Recibida → En proceso → Lista para entrega →
 ## Pruebas
 
 Para ejecutar `mvn verify`, apuntar las variables de conexión a una base de pruebas con el esquema aplicado. GitHub Actions prepara PostgreSQL, ejecuta las pruebas de dominio, persistencia y acceso web, y empaqueta el JAR.
+
+## Laboratorio con Docker Compose
+
+En Ubuntu con Docker y Compose, definir las variables `CHOKO_DB_PASSWORD`, `CHOKO_WEB_USER` y `CHOKO_WEB_PASSWORD` en el entorno o en un archivo local `.env`. Ejecutar `docker compose up -d --build` desde la raíz del repositorio y abrir http://localhost:8080/clientes. Desde otro equipo se puede acceder mediante un túnel SSH al puerto 8080 del servidor.
+
+PostgreSQL inicializa los scripts de `db/` por orden de nombre en el primer arranque con un volumen vacío. Para un volumen existente, aplicar las migraciones pendientes según el incremento instalado. `docker compose down` detiene el laboratorio y conserva el volumen de datos. Al ejecutar `docker compose up -d` se recuperan los registros.
+
+El workflow de laboratorio despliega los dos servicios en Ubuntu, ejecuta la demostración de I1–I3 en Chrome y comprueba que el historial ficticio se conserva después de recrear los contenedores.
