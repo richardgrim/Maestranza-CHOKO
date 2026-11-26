@@ -52,9 +52,16 @@ jobs:
         run: |
           printf 'Repositorio: %s\nCommit: %s\nEjecución: %s/%s/actions/runs/%s\n' \
             "$GITHUB_REPOSITORY" "$GITHUB_SHA" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" > evidencias/version.txt
+          cp evidencias/version.txt evidencias-ordenes/version.txt
       - name: Guardar evidencias
         uses: actions/upload-artifact@v4
         with:
           name: evidencias-I1-clientes
           path: evidencias/
+          if-no-files-found: error
+      - name: Guardar evidencias de órdenes
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidencias-I2-ordenes
+          path: evidencias-ordenes/
           if-no-files-found: error
