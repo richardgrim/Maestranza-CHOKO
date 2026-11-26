@@ -33,3 +33,9 @@ El workflow de laboratorio despliega los dos servicios en Ubuntu, ejecuta la dem
 El workflow de pruebas publica el informe HTML y XML de cobertura JaCoCo después de `mvn verify`. El de seguridad revisa el historial de la versión con Gitleaks, analiza los archivos Java de producción con las reglas p/java de Semgrep, comprueba dependencias Maven con OWASP Dependency-Check y analiza la imagen del Dockerfile con Trivy.
 
 Un secreto detectado, un hallazgo Semgrep de nivel ERROR o un fallo en la ejecución de un analizador hace fallar su trabajo. Los informes de dependencias e imagen requieren revisión antes de la integración. Clasificar las coincidencias por componente, versión instalada y corregida, gravedad y exposición en el laboratorio. Un trabajo completado indica que produjo el informe; la conclusión sobre vulnerabilidades se obtiene del contenido.
+
+### Revisión de la imagen del laboratorio
+
+La referencia de I4 contenía 156 coincidencias de Trivy (66 identificadores distintos). Se actualizaron los paquetes de Perl afectados mediante el repositorio de Ubuntu y se retiró del sistema de archivos de ejecución el supervisor Pebble: el contenedor inicia el JAR directamente con Java. Trivy identifica la biblioteca de Go en ese ejecutable. La revisión compara cada imagen construida con el resultado de referencia del PR.
+
+El CSV de revisión detalla el paquete, versión instalada, identificador, gravedad y versión corregida cuando Trivy la proporciona. Cuatro bibliotecas de Kerberos concentraban 76 coincidencias de referencia. Para las coincidencias sin versión corregida indicada, revisar de nuevo el informe después de actualizar la imagen base o la base de datos del analizador.
