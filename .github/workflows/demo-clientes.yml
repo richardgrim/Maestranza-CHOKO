@@ -35,7 +35,7 @@ jobs:
           java-version: '21'
           cache: maven
       - name: Crear esquema de prueba
-        run: PGPASSWORD="$CHOKO_DB_PASSWORD" psql -h localhost -U choko_test -d choko_test -v ON_ERROR_STOP=1 -1 -f db/001_clientes.sql -f db/002_ordenes.sql
+        run: PGPASSWORD="$CHOKO_DB_PASSWORD" psql -h localhost -U choko_test -d choko_test -v ON_ERROR_STOP=1 -1 -f db/001_clientes.sql -f db/002_ordenes.sql -f db/003_seguimiento.sql
       - run: mvn --batch-mode verify
       - name: Preparar navegador
         run: |
@@ -53,6 +53,7 @@ jobs:
           printf 'Repositorio: %s\nCommit: %s\nEjecución: %s/%s/actions/runs/%s\n' \
             "$GITHUB_REPOSITORY" "$GITHUB_SHA" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" > evidencias/version.txt
           cp evidencias/version.txt evidencias-ordenes/version.txt
+          cp evidencias/version.txt evidencias-seguimiento/version.txt
       - name: Guardar evidencias
         uses: actions/upload-artifact@v4
         with:
@@ -64,4 +65,10 @@ jobs:
         with:
           name: evidencias-I2-ordenes
           path: evidencias-ordenes/
+          if-no-files-found: error
+      - name: Guardar evidencias de seguimiento
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidencias-I3-seguimiento
+          path: evidencias-seguimiento/
           if-no-files-found: error

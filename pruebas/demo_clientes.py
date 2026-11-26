@@ -74,6 +74,7 @@ def demostrar():
         pagina.locator("[name=password]").fill(os.environ["CHOKO_WEB_PASSWORD"])
         pagina.locator("button[type=submit]").click()
         demostrar_ordenes(pagina, navegador, nombre)
+        demostrar_seguimiento(pagina, navegador)
         navegador.close()
 
 
@@ -118,6 +119,34 @@ def demostrar_ordenes(pagina, navegador, nombre):
     captura("05-consulta.png", "5. Consulta posterior",
             "Al volver a abrir las órdenes del cliente se recuperan el servicio y las fechas guardadas.")
     generar_pdf(navegador, figuras, salida / "Maestranza-CHOKO-I2.pdf")
+
+
+def demostrar_seguimiento(pagina, navegador):
+    salida = Path("evidencias-seguimiento")
+    salida.mkdir(exist_ok=True)
+    figuras = []
+    captura = partial(capturar, pagina, salida, figuras)
+    pagina.get_by_role("link", name="Ver seguimiento").click()
+    pagina.get_by_role("button", name="Marcar como: Recibida").click()
+    pagina.get_by_label("Repuesto", exact=True).fill("Guías de válvula")
+    pagina.get_by_label("Cantidad").fill("4")
+    pagina.get_by_role("button", name="Guardar repuesto").click()
+    expect(pagina.get_by_role("listitem").first).to_contain_text("Cantidad: 4")
+    captura("01-repuesto.png", "1. Repuestos de la orden", "Se registran cuatro guías de válvula para la culata.")
+    pagina.get_by_role("button", name="Marcar como: En proceso").click()
+    expect(pagina.get_by_role("listitem").first).to_contain_text("Recibida → En proceso")
+    captura("02-estado.png", "2. Cambio de estado", "El historial identifica la transición y el operador responsable.")
+    pagina.get_by_label("Medio de contacto").select_option("WhatsApp")
+    pagina.get_by_label("Fecha del contacto").fill("2026-11-25")
+    pagina.get_by_label("Detalle del aviso realizado").fill("Se informó al cliente ficticio de un retraso.")
+    pagina.get_by_role("button", name="Guardar aviso").click()
+    pagina.reload()
+    eventos = pagina.get_by_role("listitem")
+    expect(eventos).to_have_count(4)
+    expect(eventos.first).to_contain_text("WhatsApp")
+    expect(eventos.first).to_contain_text(os.environ["CHOKO_WEB_USER"])
+    captura("03-aviso.png", "3. Historial de avisos", "Al reabrir el seguimiento se conserva el aviso manual y su fecha.")
+    generar_pdf(navegador, figuras, salida / "Maestranza-CHOKO-I3.pdf")
 
 
 if __name__ == "__main__":
