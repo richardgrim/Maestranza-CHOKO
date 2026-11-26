@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Seguimiento · Maestranza CHOKO</title>
+  <link rel="stylesheet" th:href="@{/choko.css}">
+</head>
+<body>
+  <header><span>Maestranza <strong>CHOKO</strong></span><form method="post" th:action="@{/logout}"><button class="secundario">Cerrar sesión</button></form></header>
+  <main>
+    <a th:href="@{/clientes/{id}/ordenes(id=${orden.clienteId})}">Volver a órdenes</a>
+    <h1 th:text="|Seguimiento de la orden #${orden.id}|"></h1>
+    <p th:text="|${orden.nombre} · ${orden.componente}|"></p>
+    <p>Estado actual <strong th:text="${orden.estado.etiqueta}"></strong></p>
+    <p role="alert" th:if="${error}" th:text="${error}"></p>
+    <div th:if="${operador}">
+      <form th:if="${orden.estado.siguiente() != null}" method="post" th:action="@{/ordenes/{id}/seguimiento/estado(id=${orden.id})}">
+        <input type="hidden" name="solicitud" th:value="${tokenEstado}">
+        <input type="hidden" name="estado" th:value="${orden.estado.siguiente().name()}">
+        <button th:text="|Marcar como: ${orden.estado.siguiente().etiqueta}|"></button>
+      </form>
+      <h2>Agregar repuesto</h2>
+      <form class="registro" method="post" th:action="@{/ordenes/{id}/seguimiento/repuestos(id=${orden.id})}">
+        <input type="hidden" name="solicitud" th:value="${tokenRepuesto}">
+        <label for="nombre">Repuesto</label><input id="nombre" name="nombre" maxlength="500" required>
+        <label for="cantidad">Cantidad</label><input type="number" id="cantidad" name="cantidad" min="1" max="2147483647" required>
+        <button>Guardar repuesto</button>
+      </form>
+      <h2>Registrar aviso al cliente</h2>
+      <form class="registro" method="post" th:action="@{/ordenes/{id}/seguimiento/avisos(id=${orden.id})}">
+        <input type="hidden" name="solicitud" th:value="${tokenAviso}">
+        <label for="medio">Medio de contacto</label><select id="medio" name="medio"><option>Llamada</option><option>WhatsApp</option></select>
+        <label for="fecha">Fecha del contacto</label><input type="date" id="fecha" name="fecha" th:min="${orden.recepcion}" required>
+        <label for="nota">Detalle del aviso realizado</label><textarea id="nota" name="nota" required maxlength="500"></textarea>
+        <button>Guardar aviso</button>
+      </form>
+    </div>
+    <h2>Historial de la orden</h2>
+    <p th:if="${historial.empty}">Todavía no hay movimientos registrados.</p>
+    <ol><li th:each="evento : ${historial}">
+      <strong th:text="${evento.tipo}"></strong>
+      <span th:text="${evento.detalle}"></span>
+      <span th:if="${evento.cantidad != null}" th:text="| · Cantidad: ${evento.cantidad}|"></span>
+      <span th:if="${evento.medio != null}" th:text="| · ${evento.medio} · ${evento.fechaAviso}|"></span>
+      <small th:text="|${evento.usuario} · ${evento.registrado}|"></small>
+    </li></ol>
+  </main>
+</body>
+</html>

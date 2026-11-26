@@ -18,6 +18,7 @@
       <h3 th:text="|Orden #${orden.id} · ${orden.componente}|"></h3>
       <p style="white-space:pre-line;overflow-wrap:anywhere" th:text="${orden.servicios}"></p>
       <p>Recepción <time th:text="${orden.recepcion}"></time> · Entrega estimada <time th:text="${orden.entregaEstimada}"></time></p>
+      <a th:href="@{/ordenes/{id}/seguimiento(id=${orden.id})}">Ver seguimiento</a>
     </article>
   </main>
 </body>
