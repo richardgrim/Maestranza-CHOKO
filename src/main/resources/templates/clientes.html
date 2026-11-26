@@ -16,8 +16,8 @@
     </form>
     <p th:if="${clientes.empty}">No se encontraron clientes.</p>
     <table th:unless="${clientes.empty}">
-      <thead><tr><th>Nombre</th><th>Teléfono</th></tr></thead>
-      <tbody><tr th:each="cliente : ${clientes}"><td th:text="${cliente.nombre}"></td><td th:text="${cliente.telefono ?: '—'}"></td></tr></tbody>
+      <thead><tr><th>Nombre</th><th>Teléfono</th><th>Órdenes de trabajo</th></tr></thead>
+      <tbody><tr th:each="cliente : ${clientes}"><td th:text="${cliente.nombre}"></td><td th:text="${cliente.telefono ?: '—'}"></td><td><a th:href="@{/clientes/{id}/ordenes(id=${cliente.id})}">Ver órdenes</a></td></tr></tbody>
     </table>
     <nav aria-label="Paginación">
       <a th:if="${clientes.hasPrevious()}" th:href="@{/clientes(q=${q},pagina=${clientes.number - 1})}">Anterior</a>

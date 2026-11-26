@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registrar orden · Maestranza CHOKO</title>
+  <link rel="stylesheet" th:href="@{/choko.css}">
+</head>
+<body>
+  <header><span>Maestranza <strong>CHOKO</strong></span><form method="post" th:action="@{/logout}"><button class="secundario">Cerrar sesión</button></form></header>
+  <main>
+    <a th:href="@{/clientes/{id}/ordenes(id=${cliente.id})}">Volver a órdenes</a>
+    <h1>Registrar orden</h1>
+    <p>Cliente <strong th:text="${cliente.nombre}"></strong></p>
+    <form class="registro" method="post" th:action="@{/clientes/{id}/ordenes(id=${cliente.id})}">
+      <p role="alert" th:if="${error}" th:text="${error}"></p>
+      <label for="componente">Componente recibido</label>
+      <input id="componente" name="componente" maxlength="150" required th:value="${componente}">
+      <label for="servicios">Servicios solicitados</label>
+      <textarea id="servicios" name="servicios" rows="4" maxlength="1500" required th:text="${servicios}"></textarea>
+      <label for="recepcion">Fecha de recepción</label>
+      <input type="date" id="recepcion" name="recepcion" required th:value="${recepcion}">
+      <label for="entrega">Entrega estimada</label>
+      <input type="date" id="entrega" name="entrega" required th:value="${entrega}">
+      <button>Guardar orden</button>
+    </form>
+  </main>
+</body>
+</html>
